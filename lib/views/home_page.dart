@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart' show Get;
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
 import 'package:pocket/controllers/home_controller.dart';
+import 'package:pocket/views/estatisticas_page.dart';
+import 'package:pocket/views/transacoes_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -247,8 +250,7 @@ class _HomePageState extends State<HomePage> {
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: homeController.transacoes.length,
                     itemBuilder: (context, index) {
-                      final transacao =
-                          homeController.transacoes[index];
+                      final transacao = homeController.transacoes[index];
 
                       bool receita = transacao.valor >= 0;
 
@@ -343,7 +345,6 @@ class _HomePageState extends State<HomePage> {
 
           
           // BOTTOM NAVIGATION
-          
           Container(
             height: 58,
             decoration: BoxDecoration(
@@ -361,18 +362,36 @@ class _HomePageState extends State<HomePage> {
                   icon: Icons.home,
                   texto: 'Início',
                   selecionado: true,
+                  onTap: () {
+                  },
                 ),
 
                 _bottomItem(
                   icon: Icons.swap_horiz,
                   texto: 'Transações',
                   selecionado: false,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TransacoesPage(),
+                      ),
+                    );
+                  },
                 ),
 
                 _bottomItem(
                   icon: Icons.bar_chart,
                   texto: 'Estatísticas',
                   selecionado: false,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EstatisticasPage (),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -383,7 +402,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   // CARD DE RECEITA / DESPESA
-
   Widget _cardResumo({
     required String titulo,
     required double valor,
@@ -428,35 +446,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ITEM DO MENU INFERIOR
-
   Widget _bottomItem({
     required IconData icon,
     required String texto,
     required bool selecionado,
+    required Function? onTap,
   }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: selecionado
-              ? Color(0xFF218739)
-              : Color(0xFF78909C),
-        ),
-
-        SizedBox(height: 2),
-
-        Text(
-          texto,
-          style: TextStyle(
-            fontSize: 9,
+    final colorScheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: () {
+        onTap?.call();
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 20,
             color: selecionado
-                ? Color(0xFF218739)
-                : Color(0xFF78909C),
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
           ),
-        ),
-      ],
+      
+          SizedBox(height: 2),
+      
+          Text(
+            texto,
+            style: TextStyle(
+              fontSize: 9,
+              color: selecionado
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

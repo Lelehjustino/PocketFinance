@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
+import 'package:pocket/data/database_helper.dart';
 import 'package:pocket/models/categoria_model.dart';
+import 'package:pocket/models/transacao_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 class NovaTransacaoPage extends StatefulWidget {
     const NovaTransacaoPage({super.key});
@@ -12,8 +15,7 @@ class NovaTransacaoPage extends StatefulWidget {
 }
 
 class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
-  final CategoriasController categoriasController =
-      Get.find<CategoriasController>();
+  final CategoriasController categoriasController = Get.find<CategoriasController>();
 
   bool isReceita = false;
 
@@ -28,6 +30,18 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
   final valorFocus = FocusNode();
   final dataFocus = FocusNode();
   final descricaoFocus = FocusNode();
+
+  String nomeCategoriaSelecionada = "";
+
+  Future<void> salvarTransacao(Transacao transacao) async {
+    final db = await DatabaseHelper.instance.database;
+
+    await db.insert(
+      'transacoes',
+      transacao.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +77,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: isReceita
-                              ? Colors.green
+                              ? colorScheme.primary
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -72,8 +86,8 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                             "Receita",
                             style: TextStyle(
                               color: isReceita
-                                  ? Colors.white
-                                  : Colors.black54,
+                                  ? colorScheme.surface
+                                  : colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -101,8 +115,8 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                             "Despesa",
                             style: TextStyle(
                               color: !isReceita
-                                  ? Colors.white
-                                  : Colors.black54,
+                                  ? colorScheme.surface
+                                  : colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -206,6 +220,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                     setState(() {
                       categoriaSelecionada = index;
                     });
+                    nomeCategoriaSelecionada = categoria.nome;
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -246,16 +261,29 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: colorScheme.primary,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   // salvar shared preferences 
+                  final transacao = Transacao(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    nome: nomeController.text,
+                    valor: double.tryParse(valorController.text) ?? 0.0,
+                    data: DateTime.now(),
+                    receita: isReceita,
+                    categoria: nomeCategoriaSelecionada,
+                  );
 
+                  await salvarTransacao(transacao);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Transação salva!")),
+                  );
                 },
                 child: Text(
                   "Salvar transação",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                   ),
                 ),
               ),

@@ -40,6 +40,8 @@ class MyApp extends StatelessWidget {
 
           surface: Color(0xFFFFFFFF),
           onSurface: Color(0xFF263238),
+
+          onSurfaceVariant: Color(0xFF78909C),
         ),
 
         appBarTheme: const AppBarTheme(

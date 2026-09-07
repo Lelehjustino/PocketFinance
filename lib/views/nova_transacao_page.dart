@@ -309,9 +309,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                           valorController.text.replaceAll(',', '.'),
                         );
 
-                        if (nomeController.text.isEmpty ||
-                            valor == null ||
-                            categoriaIdSelecionada == null) {
+                        if (nomeController.text.isEmpty || valor == null ) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text("Preencha todos os campos!"),

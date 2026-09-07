@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
+import 'package:pocket/controllers/estatisticas_controller.dart';
 import 'package:pocket/controllers/home_controller.dart';
 import 'package:pocket/controllers/transacoes_controller.dart';
 import 'package:pocket/data/database_helper.dart';
@@ -33,6 +34,7 @@ void main() async {
   Get.put(HomeController());
   Get.put(CategoriasController());
   Get.put(TransacoesController());
+  Get.put(EstatisticasController());
 
   runApp(const MyApp());
 }

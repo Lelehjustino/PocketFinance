@@ -21,6 +21,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -50,9 +51,9 @@ class _TransacoesPageState extends State<TransacoesPage> {
             child: Column(
               children: [
                 // FILTRO DE DATA
-                GestureDetector(
+                /*GestureDetector(
                   onTap: () {
-                    
+
                   },
                   child: Padding(
                     padding: EdgeInsets.all(12),
@@ -101,7 +102,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
                       ],
                     ),
                   ),
-                ),
+                ),*/
 
                 // LISTA
                 Expanded(
@@ -124,54 +125,116 @@ class _TransacoesPageState extends State<TransacoesPage> {
                       );
                     }
 
-                    return ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      itemCount: transacoes.length,
-                      itemBuilder: (context, index) {
-                        final transacao = transacoes[index];
-
-                        return Card(
-                          margin: EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: transacao.receita
-                                  ? Colors.green.shade100
-                                  : Colors.red.shade100,
-                              child: Icon(
-                                transacao.receita
-                                    ? Icons.arrow_downward
-                                    : Icons.arrow_upward,
-                                color: transacao.receita
-                                    ? Colors.green
-                                    : Colors.red,
+                    return Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: transacoes.length,
+                        itemBuilder: (context, index) {
+                          final transacao = transacoes[index];
+                      
+                          return Card(
+                            margin: EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: transacao.receita
+                                    ? Colors.green.shade100
+                                    : Colors.red.shade100,
+                                child: Icon(
+                                  transacao.receita
+                                      ? Icons.arrow_downward
+                                      : Icons.arrow_upward,
+                                  color: transacao.receita
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
                               ),
-                            ),
-
-                            title: Text(
-                              transacao.nome,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                      
+                              title: Text(
+                                transacao.nome,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-
-                            subtitle: Text(
-                              '${transacao.data.day.toString().padLeft(2, '0')}/'
-                              '${transacao.data.month.toString().padLeft(2, '0')}/'
-                              '${transacao.data.year}',
-                            ),
-
-                            trailing: Text(
-                              'R\$ ${transacao.valor.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: transacao.receita
-                                    ? Colors.green
-                                    : Colors.red,
+                      
+                              subtitle: Text(
+                                '${transacao.data.day.toString().padLeft(2, '0')}/'
+                                '${transacao.data.month.toString().padLeft(2, '0')}/'
+                                '${transacao.data.year}',
                               ),
+                      
+                              trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'R\$ ${transacao.valor.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: transacao.receita
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () async {
+                                        final confirmar = await showDialog<bool>(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title: const Text('Excluir transação'),
+                                            content: const Text(
+                                              'Deseja realmente excluir esta transação?',
+                                            ),
+                                            actions: [
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: colorScheme.primary,
+                                                ),
+                                                onPressed: () => Navigator.pop(context, false),
+                                                child: Text(
+                                                  'Cancelar',
+                                                  style: TextStyle(
+                                                    color: colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: colorScheme.error,
+                                                ),
+                                                onPressed: () => Navigator.pop(context, true),
+                                                child: Text(
+                                                  'Excluir',
+                                                  style: TextStyle(
+                                                    color: colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirmar == true) {
+                                          await transacoesController.deletarTransacao(transacao.id);
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Transação excluída.'),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     );
                   }),
                 ),

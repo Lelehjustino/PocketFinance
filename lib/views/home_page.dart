@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
 import 'package:pocket/controllers/home_controller.dart';
+import 'package:pocket/models/transacao_model.dart';
 import 'package:pocket/views/configuracoes_page.dart';
 import 'package:pocket/views/estatisticas_page.dart';
 import 'package:pocket/views/transacoes_page.dart';
@@ -18,17 +19,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeController homeController = Get.find<HomeController>();
-  final CategoriasController categoriasController =
-      Get.find<CategoriasController>();
+  final CategoriasController categoriasController = Get.find<CategoriasController>();
 
   String mesSelecionado = 'Setembro';
   String categoriaSeleciona = 'Todos';
+  int categoriaSelecionadaId = -1;
 
   @override
   void initState() {
     homeController.calcularResumo();
     categoriasController.carregarCategorias();
     super.initState();
+  }
+
+  void filtrarTransacoesPorCategoria(int categoriaId) {
+    setState(() {
+      categoriaSelecionadaId = categoriaId;
+      categoriaSeleciona = categoriaId == -1
+          ? 'Todos'
+          : categoriasController.categorias
+              .firstWhere((categoria) => categoria.id == categoriaId)
+              .nome;
+    });
   }
 
   @override
@@ -145,18 +157,14 @@ class _HomePageState extends State<HomePage> {
                         scrollDirection: Axis.horizontal,
                         itemCount: categoriasController.categorias.length,
                         itemBuilder: (context, index) {
-                          final categoria =
-                              categoriasController.categorias[index];
-                          bool selecionada =
-                              categoriaSeleciona == categoria.nome;
+                          final categoria = categoriasController.categorias[index];
+                          bool selecionada = categoriaSeleciona == categoria.nome;
 
                           return Padding(
                             padding: EdgeInsets.only(right: 8),
                             child: GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  categoriaSeleciona = categoria.nome;
-                                });
+                                filtrarTransacoesPorCategoria(categoria.id);
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -211,9 +219,20 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: homeController.transacoes.length,
+                      itemCount: homeController.transacoes
+                          .where(
+                            (transacao) => categoriaSelecionadaId == -1 ||
+                                transacao.categoriaId == categoriaSelecionadaId,
+                          )
+                          .length,
                       itemBuilder: (context, index) {
-                        final transacao = homeController.transacoes[index];
+                        final transacoesFiltradas = homeController.transacoes
+                            .where(
+                              (transacao) => categoriaSelecionadaId == -1 ||
+                                  transacao.categoriaId == categoriaSelecionadaId,
+                            )
+                            .toList();
+                        final transacao = transacoesFiltradas[index];
 
                         bool receita = transacao.valor >= 0;
 

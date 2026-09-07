@@ -29,4 +29,10 @@ class TransacoesController extends GetxController {
       );
     }).toList();
   }
+
+  Future<void> deletarTransacao(String id) async {
+    await DatabaseHelper.instance.deletarTransacao(id);
+
+    await carregarTransacoes();
+  }
 }

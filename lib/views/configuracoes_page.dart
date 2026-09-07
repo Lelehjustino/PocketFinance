@@ -29,58 +29,66 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
             child: Column(
               children: [
                 Expanded(
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.error,
-                        ),
-                        onPressed: () async {
-                          final confirmar = await showDialog<bool>(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text('Apagar transações'),
-                                content: Text(
-                                  'Tem certeza que deseja apagar todas as transações? Essa ação não poderá ser desfeita.',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context, false),
-                                    child: Text('Cancelar'),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.rocket_launch_rounded,
+                              size: 70,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              "Bem-vindo!",
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorScheme.error,
-                                    ),
-                                    onPressed: () => Navigator.pop(context, true),
-                                    child: Text(
-                                      'Apagar'
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-
-                          if (confirmar == true) {
-                            await DatabaseHelper.instance.apagarTodasTransacoes();
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Todas as transações foram apagadas.'),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Este aplicativo foi desenvolvido para tornar sua experiência "
+                              "mais simples, rápida e personalizada.\n\n"
+                              "Antes de começar, configure algumas preferências para que o "
+                              "aplicativo funcione da melhor forma para você.",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            const SizedBox(height: 24),
+                            Divider(),
+                            const SizedBox(height: 16),
+                            ListTile(
+                              leading: Icon(
+                                Icons.security,
+                                color: colorScheme.primary,
                               ),
-                            );
-                          }
-                        },
-                        child: Text(
-                          'Apagar todas as transações',
-                          style: TextStyle(
-                            color: colorScheme.onError,
-                          ),
+                              title: const Text("Dados seguros"),
+                              subtitle: const Text(
+                                "Suas informações permanecem protegidas.",
+                              ),
+                            ),
+                            ListTile(
+                              leading: Icon(
+                                Icons.check_circle,
+                                color: colorScheme.primary,
+                              ),
+                              title: const Text("Tudo pronto"),
+                              subtitle: const Text(
+                                "Após salvar, você poderá utilizar todos os recursos.",
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
                 Padding(

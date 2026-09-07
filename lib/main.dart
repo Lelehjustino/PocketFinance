@@ -3,13 +3,36 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
 import 'package:pocket/controllers/home_controller.dart';
+import 'package:pocket/controllers/transacoes_controller.dart';
+import 'package:pocket/data/database_helper.dart';
 import 'package:pocket/views/home_page.dart';
 
-void main() {
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:pocket/controllers/home_controller.dart';
+import 'package:pocket/data/database_helper.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // SQLite para Windows/Linux
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
+  // Inicializa o banco
+  await DatabaseHelper.instance.database;
+
+  // Inicializa controller
   Get.put(HomeController());
   Get.put(CategoriasController());
+  Get.put(TransacoesController());
 
   runApp(const MyApp());
 }

@@ -2,24 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:pocket/controllers/categorias_controller.dart';
+import 'package:pocket/controllers/home_controller.dart';
+import 'package:pocket/controllers/transacoes_controller.dart';
 import 'package:pocket/data/database_helper.dart';
-import 'package:pocket/models/categoria_model.dart';
 import 'package:pocket/models/transacao_model.dart';
+import 'package:pocket/views/transacoes_page.dart';
 import 'package:sqflite/sqflite.dart';
 
 class NovaTransacaoPage extends StatefulWidget {
-    const NovaTransacaoPage({super.key});
+  const NovaTransacaoPage({super.key});
 
-    @override
-    State<NovaTransacaoPage> createState() => _NovaTransacaoPageState();
+  @override
+  State<NovaTransacaoPage> createState() => _NovaTransacaoPageState();
 }
 
 class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
-  final CategoriasController categoriasController = Get.find<CategoriasController>();
+  final CategoriasController categoriasController =
+      Get.find<CategoriasController>();
+  final HomeController homeController = Get.find<HomeController>();
+  final TransacoesController transacoesController =
+      Get.find<TransacoesController>();
 
   bool isReceita = false;
 
   int categoriaSelecionada = -1;
+  int? categoriaIdSelecionada;
 
   final nomeController = TextEditingController();
   final valorController = TextEditingController();
@@ -43,20 +50,37 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
     );
   }
 
+  void limparPage() {
+    nomeController.clear();
+    valorController.clear();
+    dataController.clear();
+    descricaoController.clear();
+
+    setState(() {
+      isReceita = false;
+      categoriaSelecionada = -1;
+      categoriaIdSelecionada = null;
+      nomeCategoriaSelecionada = "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Nova transação"),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text('Nova transação'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// RECEITA / DESPESA
             Container(
               height: 50,
@@ -66,7 +90,6 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
               ),
               child: Row(
                 children: [
-
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -105,9 +128,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: !isReceita
-                              ? Colors.red
-                              : Colors.transparent,
+                          color: !isReceita ? Colors.red : Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Center(
@@ -164,7 +185,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
             TextField(
               controller: dataController,
               focusNode: dataFocus,
-              readOnly: true,
+              readOnly: false,
               decoration: InputDecoration(
                 labelText: "Data",
                 suffixIcon: Icon(Icons.calendar_today),
@@ -191,12 +212,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
 
             SizedBox(height: 20),
 
-            Text(
-              "Categoria",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text("Categoria", style: TextStyle(fontWeight: FontWeight.bold)),
 
             SizedBox(height: 10),
 
@@ -204,8 +220,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: categoriasController.categorias.length,
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
@@ -219,8 +234,9 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                   onTap: () {
                     setState(() {
                       categoriaSelecionada = index;
+                      categoriaIdSelecionada = categoria.id;
+                      nomeCategoriaSelecionada = categoria.nome;
                     });
-                    nomeCategoriaSelecionada = categoria.nome;
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -235,18 +251,14 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
-                        Icon( 
+                        Icon(
                           categoria.icone,
                           color: Color(int.parse(categoria.cor)),
                         ),
 
                         SizedBox(height: 5),
 
-                        Text(
-                          categoria.nome,
-                          style: TextStyle(fontSize: 11),
-                        ),
+                        Text(categoria.nome, style: TextStyle(fontSize: 11)),
                       ],
                     ),
                   ),
@@ -256,37 +268,91 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
 
             SizedBox(height: 30),
 
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                ),
-                onPressed: () async {
-                  // salvar shared preferences 
-                  final transacao = Transacao(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    nome: nomeController.text,
-                    valor: double.tryParse(valorController.text) ?? 0.0,
-                    data: DateTime.now(),
-                    receita: isReceita,
-                    categoria: nomeCategoriaSelecionada,
-                  );
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.error,
+                      ),
+                      onPressed: () async {
+                        limparPage();
 
-                  await salvarTransacao(transacao);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Transação salva!")),
-                  );
-                },
-                child: Text(
-                  "Salvar transação",
-                  style: TextStyle(
-                    color: colorScheme.surface,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => TransacoesPage()),
+                        );
+                      },
+                      child: Text(
+                        "Cancelar",
+                        style: TextStyle(color: colorScheme.surface),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                      ),
+                      onPressed: () async {
+                        final valor = double.tryParse(
+                          valorController.text.replaceAll(',', '.'),
+                        );
+
+                        if (nomeController.text.isEmpty ||
+                            valor == null ||
+                            categoriaIdSelecionada == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Preencha todos os campos!"),
+                            ),
+                          );
+                          return;
+                        }
+                        // salvar shared preferences
+                        final transacao = Transacao(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          nome: nomeController.text,
+                          valor: valor,
+                          data: DateTime.now(),
+                          receita: isReceita,
+                          categoriaId: categoriaIdSelecionada!,
+                          descricao: descricaoController.text,
+                        );
+
+                        await salvarTransacao(transacao);
+                        await transacoesController.carregarTransacoes();
+                        await homeController.carregarTransacoes();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Transação salva!")),
+                        );
+
+                        limparPage();
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => TransacoesPage()),
+                        );
+                      },
+                      child: Text(
+                        "Salvar transação",
+                        style: TextStyle(color: colorScheme.surface),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

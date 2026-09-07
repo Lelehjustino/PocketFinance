@@ -1,22 +1,15 @@
-import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pocket/data/database_helper.dart';
 import 'package:pocket/models/transacao_model.dart';
 
-class HomeController extends GetxController {
-  RxDouble saldoTotal = 0.0.obs;
-  RxDouble receitaMes = 0.0.obs;
-  RxDouble despesaMes = 0.0.obs;
-
-  final RxList<Transacao> transacoes = <Transacao>[].obs;
+class TransacoesController extends GetxController {
+  var transacoes = <Transacao>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    carregarTudo();
-  }
-
-  Future<void> carregarTudo() async {
-    await carregarTransacoes();
+    carregarTransacoes();
   }
 
   Future<void> carregarTransacoes() async {
@@ -35,24 +28,5 @@ class HomeController extends GetxController {
         descricao: item['descricao'] as String?,
       );
     }).toList();
-
-    calcularResumo();
-  }
-
-  void calcularResumo() {
-    double receitas = 0;
-    double despesas = 0;
-
-    for (final t in transacoes) {
-      if (t.receita) {
-        receitas += t.valor;
-      } else {
-        despesas += t.valor;
-      }
-    }
-
-    receitaMes.value = receitas;
-    despesaMes.value = despesas;
-    saldoTotal.value = receitas - despesas;
   }
 }

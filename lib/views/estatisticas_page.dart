@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket/views/configuracoes_page.dart';
 import 'package:pocket/views/home_page.dart';
 import 'package:pocket/views/transacoes_page.dart';
 
@@ -14,7 +15,26 @@ class _EstatisticasPageState extends State<EstatisticasPage> {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Estatísticas"),
+        automaticallyImplyLeading: false, // Remove a seta de voltar
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'Estatísticas',
+        ),
+        centerTitle: true, // Centraliza o título
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ConfiguracoesPage(),
+                ),
+              );
+            },
+            icon: Icon(Icons.settings),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -55,7 +75,7 @@ class _EstatisticasPageState extends State<EstatisticasPage> {
                 _bottomItem(
                   icon: Icons.swap_horiz,
                   texto: 'Transações',
-                  selecionado: true,
+                  selecionado: false,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -69,7 +89,7 @@ class _EstatisticasPageState extends State<EstatisticasPage> {
                 _bottomItem(
                   icon: Icons.bar_chart,
                   texto: 'Estatísticas',
-                  selecionado: false,
+                  selecionado: true,
                   onTap: () {
                     
                   },

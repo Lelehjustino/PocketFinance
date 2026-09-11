@@ -188,7 +188,7 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
               readOnly: false,
               decoration: InputDecoration(
                 labelText: "Data",
-                suffixIcon: Icon(Icons.calendar_today),
+                // suffixIcon: Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -210,12 +210,16 @@ class _NovaTransacaoPageState extends State<NovaTransacaoPage> {
               ),
             ),
 
+            if(!isReceita)
             SizedBox(height: 20),
-
+            
+            if(!isReceita)
             Text("Categoria", style: TextStyle(fontWeight: FontWeight.bold)),
-
+            
+            if(!isReceita)
             SizedBox(height: 10),
 
+            if(!isReceita)
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

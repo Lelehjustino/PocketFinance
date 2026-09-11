@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF218739),
+                              color: homeController.saldoTotal.value >= 0 ? Color(0xFF218739) : Colors.red,
                             ),
                           ),
                         ],
@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
                             .toList();
                         final transacao = transacoesFiltradas[index];
 
-                        bool receita = transacao.valor >= 0;
+                        bool receita = transacao.receita;
 
                         return Container(
                           padding: EdgeInsets.symmetric(vertical: 9),
@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                                     SizedBox(height: 3),
 
                                     Text(
-                                      'Receita · ${transacao.data.toString().substring(0, 10)}',
+                                      '${receita ? 'Receita' : 'Despesa'} · ${transacao.data.toString().substring(0, 10)}',
                                       style: TextStyle(
                                         fontSize: 9,
                                         color: Color(0xFF78909C),

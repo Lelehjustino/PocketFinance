@@ -1,6 +1,6 @@
 # Pocket Finance
 
-**[⬇️ Download do APK](https://drive.google.com/file/d/1iFKaF_4ZFmOfk6j4sUg1rN8g14GaMXFj/view?usp=drive_link)**
+**[⬇️ Download do APK](https://drive.google.com/file/d/17jRbFIoPuOmooXYTuaLj51grHKzJPIno/view?usp=sharing)**
 
 Um aplicativo de controle financeiro pessoal desenvolvido em **Flutter**, pensado para facilitar o registro e o acompanhamento das finanças do dia a dia.
 
@@ -53,6 +53,6 @@ Dessa forma, os dados podem ser consultados e utilizados para calcular o saldo e
 
 Você pode baixar e testar o aplicativo através do link abaixo:
 
-**[⬇️ Download do APK](https://drive.google.com/file/d/1iFKaF_4ZFmOfk6j4sUg1rN8g14GaMXFj/view?usp=drive_link)**
+**[⬇️ Download do APK](https://drive.google.com/file/d/17jRbFIoPuOmooXYTuaLj51grHKzJPIno/view?usp=sharing)**
 
 **Desenvolvido por Letícia Justino Wehbe :)** 

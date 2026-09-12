@@ -9,6 +9,7 @@ import 'package:pocket/models/transacao_model.dart';
 import 'package:pocket/views/configuracoes_page.dart';
 import 'package:pocket/views/estatisticas_page.dart';
 import 'package:pocket/views/transacoes_page.dart';
+import 'package:pocket/widgets/_bottomItem.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -330,33 +331,53 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _bottomItem(
+                BottomItem(
                   icon: Icons.home,
                   texto: 'Início',
                   selecionado: true,
                   onTap: () {},
                 ),
 
-                _bottomItem(
+                BottomItem(
                   icon: Icons.swap_horiz,
                   texto: 'Transações',
                   selecionado: false,
                   onTap: () {
-                    Navigator.push(
+                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => TransacoesPage()),
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => TransacoesPage(),
+                        transitionDuration: Duration(milliseconds: 150),
+                        reverseTransitionDuration: Duration(milliseconds: 150),
+                        transitionsBuilder: (_, animation, __, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
 
-                _bottomItem(
+                BottomItem(
                   icon: Icons.bar_chart,
                   texto: 'Estatísticas',
                   selecionado: false,
                   onTap: () {
-                    Navigator.push(
+                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => EstatisticasPage()),
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => EstatisticasPage(),
+                        transitionDuration: Duration(milliseconds: 150),
+                        reverseTransitionDuration: Duration(milliseconds: 150),
+                        transitionsBuilder: (_, animation, __, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
@@ -403,45 +424,6 @@ class _HomePageState extends State<HomePage> {
               fontSize: 13,
               fontWeight: FontWeight.bold,
               color: cor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ITEM DO MENU INFERIOR
-  Widget _bottomItem({
-    required IconData icon,
-    required String texto,
-    required bool selecionado,
-    required Function? onTap,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () {
-        onTap?.call();
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: selecionado
-                ? colorScheme.primary
-                : colorScheme.onSurfaceVariant,
-          ),
-
-          SizedBox(height: 2),
-
-          Text(
-            texto,
-            style: TextStyle(
-              fontSize: 9,
-              color: selecionado
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant,
             ),
           ),
         ],

@@ -55,4 +55,4 @@ Você pode baixar e testar o aplicativo através do link abaixo:
 
 **[⬇️ Download do APK](https://drive.google.com/file/d/1iFKaF_4ZFmOfk6j4sUg1rN8g14GaMXFj/view?usp=drive_link)**
 
-**Desenvolvido por Letícia Justino Wehbe** 💚
+**Desenvolvido por Letícia Justino Wehbe :)** 

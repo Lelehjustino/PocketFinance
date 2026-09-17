@@ -52,9 +52,20 @@ class _TransacoesPageState extends State<TransacoesPage> {
             child: Column(
               children: [
                 // FILTRO DE DATA
-                /*GestureDetector(
+                GestureDetector(
                   onTap: () {
-
+                    showDatePicker(
+                      context: context,
+                      initialDate: dataSelecionada ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    ).then((data) {
+                      if (data != null) {
+                        setState(() {
+                          dataSelecionada = data;
+                        });
+                      }
+                    });
                   },
                   child: Padding(
                     padding: EdgeInsets.all(12),
@@ -103,7 +114,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
                       ],
                     ),
                   ),
-                ),*/
+                ),
 
                 // LISTA
                 Expanded(

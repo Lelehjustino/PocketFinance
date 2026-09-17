@@ -224,15 +224,13 @@ class _HomePageState extends State<HomePage> {
                           .where(
                             (transacao) => categoriaSelecionadaId == -1 ||
                                 transacao.categoriaId == categoriaSelecionadaId,
-                          )
-                          .length,
+                          ).length,
                       itemBuilder: (context, index) {
                         final transacoesFiltradas = homeController.transacoes
                             .where(
                               (transacao) => categoriaSelecionadaId == -1 ||
                                   transacao.categoriaId == categoriaSelecionadaId,
-                            )
-                            .toList();
+                            ).toList();
                         final transacao = transacoesFiltradas[index];
 
                         bool receita = transacao.receita;

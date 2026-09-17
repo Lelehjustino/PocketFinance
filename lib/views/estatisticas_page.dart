@@ -136,18 +136,80 @@ class _EstatisticasPageState extends State<EstatisticasPage> {
                       SizedBox(height: 12),
 
                       ...categorias.map((categoria) {
+                      final double total = (categoria['total'] as num).toDouble();
 
-                        return Card(
-                          child: ListTile(
-                            title: Text(categoria['nome']),
-                            trailing: Text(
-                              "R\$ ${(categoria['total'] as num).toStringAsFixed(2)}",
-                            ),
+                      double porcentagem = 0;
+
+                      if (despesas > 0) {
+                        porcentagem = total * 100 / despesas;
+                      }
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      categoria['nome'],
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 10),
+
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: LinearProgressIndicator(
+                                        value: (porcentagem / 100).clamp(0.0, 1.0),
+                                        minHeight: 6,
+                                        backgroundColor: Colors.grey.withOpacity(0.15),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(width: 20),
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "R\$ ${total.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 4),
+
+                                  Text(
+                                    "${porcentagem.toStringAsFixed(0)}%",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-
-                      })
-
+                        ),
+                      );
+                    }),
                     ],
                   ),
                 ),
